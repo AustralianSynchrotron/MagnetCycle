@@ -39,278 +39,42 @@
     </script>
   </head>
   <body>
-    <table>
-      <colgroup>
-        <col class='name'>
-        <col class='value'>
-        <col class='value'>
-        <col class='status'>
-        <col class='cycle'>
-        <col class='spacer'>
-        <col class='name'>
-        <col class='value'>
-        <col class='value'>
-        <col class='status'>
-        <col class='cycle'>
-        <col class='spacer'>
-        <col class='name'>
-        <col class='value'>
-        <col class='value'>
-        <col class='status'>
-        <col class='cycle'>
-      </colgroup>
-      <thead>
+
+    {% macro table(mags) %}
+      <table>
+        <colgroup>
+          <col class='name'>
+          <col class='value'>
+          <col class='value'>
+          <col class='status'>
+          <col class='cycle'>
+        </colgroup>
+        <thead>
           <tr>
             <th>Name</th>
             <th>Setpoint</th>
             <th>Readback</th>
             <th>Status</th>
             <th>Cycle</th>
-            <th></th>
-            <th>Name</th>
-            <th>Setpoint</th>
-            <th>Readback</th>
-            <th>Status</th>
-            <th>Cycle</th>
-            <th></th>
-            <th>Name</th>
-            <th>Setpoint</th>
-            <th>Readback</th>
-            <th>Status</th>
-            <th>Cycle</th>
           </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>OCH-B-2-1</td>
-          <td data-bind='text: PS_OCH_B_2_1_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_1_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_1_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-13</td>
-          <td data-bind='text: PS_OCH_B_2_13_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_13_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_13_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-1</td>
-          <td data-bind='text: PS_OCV_B_2_1_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_1_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_1_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-2</td>
-          <td data-bind='text: PS_OCH_B_2_2_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_2_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_2_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-14</td>
-          <td data-bind='text: PS_OCH_B_2_14_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_14_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_14_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-2</td>
-          <td data-bind='text: PS_OCV_B_2_2_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_2_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_2_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-3</td>
-          <td data-bind='text: PS_OCH_B_2_3_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_3_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_3_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-15</td>
-          <td data-bind='text: PS_OCH_B_2_15_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_15_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_15_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-3</td>
-          <td data-bind='text: PS_OCV_B_2_3_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_3_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_3_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-4</td>
-          <td data-bind='text: PS_OCH_B_2_4_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_4_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_4_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-16</td>
-          <td data-bind='text: PS_OCH_B_2_16_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_16_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_16_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-4</td>
-          <td data-bind='text: PS_OCV_B_2_4_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_4_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_4_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-5</td>
-          <td data-bind='text: PS_OCH_B_2_5_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_5_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_5_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-17</td>
-          <td data-bind='text: PS_OCH_B_2_17_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_17_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_17_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-5</td>
-          <td data-bind='text: PS_OCV_B_2_5_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_5_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_5_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-6</td>
-          <td data-bind='text: PS_OCH_B_2_6_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_6_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_6_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-18</td>
-          <td data-bind='text: PS_OCH_B_2_18_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_18_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_18_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-6</td>
-          <td data-bind='text: PS_OCV_B_2_6_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_6_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_6_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-7</td>
-          <td data-bind='text: PS_OCH_B_2_7_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_7_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_7_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-19</td>
-          <td data-bind='text: PS_OCH_B_2_19_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_19_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_19_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-7</td>
-          <td data-bind='text: PS_OCV_B_2_7_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_7_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_7_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-8</td>
-          <td data-bind='text: PS_OCH_B_2_8_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_8_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_8_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-20</td>
-          <td data-bind='text: PS_OCH_B_2_20_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_20_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_20_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-8</td>
-          <td data-bind='text: PS_OCV_B_2_8_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_8_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_8_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-9</td>
-          <td data-bind='text: PS_OCH_B_2_9_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_9_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_9_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-21</td>
-          <td data-bind='text: PS_OCH_B_2_21_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_21_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_21_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-9</td>
-          <td data-bind='text: PS_OCV_B_2_09_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_09_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_09_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-10</td>
-          <td data-bind='text: PS_OCH_B_2_10_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_10_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_10_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-22</td>
-          <td data-bind='text: PS_OCH_B_2_22_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_22_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_22_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-10</td>
-          <td data-bind='text: PS_OCV_B_2_10_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_10_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_10_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-11</td>
-          <td data-bind='text: PS_OCH_B_2_11_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_11_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_11_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-23</td>
-          <td data-bind='text: PS_OCH_B_2_23_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_23_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_23_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCV-B-2-11</td>
-          <td data-bind='text: PS_OCV_B_2_11_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCV_B_2_11_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCV_B_2_11_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-        </tr>
-        <tr>
-          <td>OCH-B-2-12</td>
-          <td data-bind='text: PS_OCH_B_2_12_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_12_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_12_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td>OCH-B-2-24</td>
-          <td data-bind='text: PS_OCH_B_2_24_CURRENT_SP'></td>
-          <td data-bind='text: PS_OCH_B_2_24_CURRENT_MONITOR'></td>
-          <td data-bind='text: PS_OCH_B_2_24_CYCLE_STATUS'></td>
-          <td><input type='checkbox'/></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
+        </thead>
+        <tbody>
+          {% for mag in mags %}
+            <tr>
+              <td>{{ mag.label }}</td>
+              <td data-bind='text: {{mag.base_code}}_CURRENT_SP'></td>
+              <td data-bind='text: {{mag.base_code}}_CURRENT_MONITOR'></td>
+              <td data-bind='text: {{mag.base_code}}_CYCLE_STATUS'></td>
+              <td><input type='checkbox'/></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endmacro %}
+
+    {{ table(magnets[:12]) }}
+    {{ table(magnets[12:24]) }}
+    {{ table(magnets[24:]) }}
+
+ </body>
 </html>

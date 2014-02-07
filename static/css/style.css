@@ -1,0 +1,29 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+table {
+  padding: 12px;
+  float: left;
+}
+
+col.name {
+  width: 100px;
+}
+
+col.value {
+  width: 70px;
+}
+
+col.status {
+  width: 70px;
+}
+
+col.cycle {
+  width: 40px;
+}
+
+th, td {
+  text-align: center;
+}

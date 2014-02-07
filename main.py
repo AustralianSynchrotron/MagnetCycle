@@ -7,6 +7,7 @@ from epics import Device
 import json
 
 app = flask.Flask(__name__)
+app.debug = True
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 sockets = Sockets(app)
@@ -24,6 +25,7 @@ class Magnet(Device):
     def __init__(self, plane, number, **kws):
         prefix = 'PS-OC{0}-B-2-{1}'.format(plane, number)
         attrs = ('CURRENT_SP', 'CURRENT_MONITOR')
+        self.label = 'OC{0}-B-2-{1}'.format(plane, number)
         self.base_code = prefix.replace(':', '_').replace('-', '_')
         self.cycle_status = 'Ready'
         super(Magnet, self).__init__(prefix=prefix, delim=':', attrs=attrs, **kws)
@@ -50,7 +52,7 @@ def index():
     return flask.render_template('index.html', magnets=magnets)
 
 @sockets.route('/socket')
-def echo_socket(ws):
+def socket(ws):
     ws_conns.append(ws)
     while True:
         message = ws.receive()
