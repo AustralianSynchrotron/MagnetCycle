@@ -5,6 +5,7 @@ from flask_sockets import Sockets
 from geventwebsocket.exceptions import WebSocketError
 from epics import Device
 import json
+import re
 
 app = flask.Flask(__name__)
 app.debug = True
@@ -29,13 +30,14 @@ class Magnet(Device):
     STATUS_GOING_TO_MIN = 'Going to min'
     STATUS_GOING_TO_MAX = 'Going to max'
 
-    def __init__(self, prefix, label, min_sp=None, max_sp=None, **kws):
-        self.label = label
-        self.base_code = prefix.replace(':', '_').replace('-', '_')
+    def __init__(self, prefix, name, min_sp=None, max_sp=None, **kws):
+        self.name = name
+        self.tag = re.sub('[:-]', '_', prefix)
         self.cycle_status = self.STATUS_READY
         self.min_sp = min_sp
         self.max_sp = max_sp
-        self.pause_time = 3.
+        self.cycle_iterations = 3
+        self.cycle_pause_time = 3.
         super(Magnet, self).__init__(prefix=prefix, delim=':', attrs=self.attrs, **kws)
 
     @property
@@ -51,22 +53,34 @@ magnets = []
 # Add Horizontal Correctors
 for num in range(1, 25):
     prefix = 'PS-OCH-B-2-{0}'.format(num)
-    label = 'OCH-B-2-{0}'.format(num)
-    magnets.append(Magnet(prefix, label, min_sp=-4., max_sp=4.))
+    name = 'OCH-B-2-{0}'.format(num)
+    magnets.append(Magnet(prefix, name, min_sp=-4., max_sp=4.))
 
 # Add Vertical Correctors
 for num in range(1, 12):
     prefix = 'PS-OCV-B-2-{0}'.format(num if num != 9 else '09')
-    label = 'OCV-B-2-{0}'.format(num)
-    magnets.append(Magnet(prefix, label, min_sp=-4., max_sp=4.))
+    name = 'OCV-B-2-{0}'.format(num)
+    magnets.append(Magnet(prefix, name, min_sp=-4., max_sp=4.))
 
+tag_to_magnet = {}
 for magnet in magnets:
     magnet.add_callback('CURRENT_SP', callback)
     magnet.add_callback('CURRENT_MONITOR', callback)
+    tag_to_magnet[magnet.tag] = magnet
 
 @app.route('/')
 def index():
     return flask.render_template('index.html', magnets=magnets)
+
+@app.route('/cycle', methods=['POST'])
+def cycle():
+    tags = flask.request.json
+    try:
+        magnets_to_cycle = [tag_to_magnet[tag] for tag in tags]
+    except TypeError, KeyError:
+        flask.abort(400)
+    # TODO: Cycle magnets
+    return 'OK'
 
 @sockets.route('/socket')
 def socket(ws):

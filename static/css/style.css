@@ -3,27 +3,47 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.content {
+  text-align: center;
+}
+
+.tables-container {
+  width: 1300px;
+  margin: 0 auto;
+}
+
 table {
-  padding: 12px;
+  padding: 10px;
+  width: 33%;
   float: left;
 }
 
 col.name {
-  width: 100px;
 }
 
 col.value {
-  width: 70px;
+  width: 19%;
 }
 
 col.status {
-  width: 70px;
+  width: 25%;
 }
 
 col.cycle {
-  width: 40px;
+  width: 10%;
 }
 
 th, td {
   text-align: center;
+}
+
+button {
+  font-size: 18px;
+  margin: 12px;
 }
