@@ -7,10 +7,10 @@
     <script>
       ko.extenders.numeric = function(target, precision) {
           var result = ko.dependentObservable({
-              read: function() {
-                 return target().toFixed(precision); 
-              },
-              write: target 
+            read: function() {
+              return target().toFixed(precision); 
+            },
+            write: target 
           });
           result.raw = target;
           return result;
@@ -19,7 +19,7 @@
       function AppViewModel() {
         {% for mag in magnets %}
           this['{{mag.base_code}}_CURRENT_SP'] = ko.observable({{mag.setpoint}}).extend({numeric: 3});
-          this['{{mag.base_code}}_CURRENT_MONITOR'] = ko.observable({{mag.readback}}).extend({number: 3});
+          this['{{mag.base_code}}_CURRENT_MONITOR'] = ko.observable({{mag.readback}}).extend({numeric: 3});
           this['{{mag.base_code}}_CYCLE_STATUS'] = ko.observable('{{mag.cycle_status}}');
         {% endfor %}
       }

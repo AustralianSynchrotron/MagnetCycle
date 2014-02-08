@@ -22,15 +22,21 @@ def callback(pvname, value, **kws):
             pass
 
 class Magnet(Device):
-    def __init__(self, plane, number, **kws):
-        prefix = 'PS-OC{0}-B-2-{1}'.format(plane, number)
-        attrs = ('CURRENT_SP', 'CURRENT_MONITOR')
-        self.label = 'OC{0}-B-2-{1}'.format(plane, number)
+
+    attrs = ('CURRENT_SP', 'CURRENT_MONITOR')
+
+    STATUS_READY = 'Ready'
+    STATUS_GOING_TO_MIN = 'Going to min'
+    STATUS_GOING_TO_MAX = 'Going to max'
+
+    def __init__(self, prefix, label, min_sp=None, max_sp=None, **kws):
+        self.label = label
         self.base_code = prefix.replace(':', '_').replace('-', '_')
-        self.cycle_status = 'Ready'
-        super(Magnet, self).__init__(prefix=prefix, delim=':', attrs=attrs, **kws)
-        self.add_callback('CURRENT_SP', callback)
-        self.add_callback('CURRENT_MONITOR', callback)
+        self.cycle_status = self.STATUS_READY
+        self.min_sp = min_sp
+        self.max_sp = max_sp
+        self.pause_time = 3.
+        super(Magnet, self).__init__(prefix=prefix, delim=':', attrs=self.attrs, **kws)
 
     @property
     def setpoint(self):
@@ -41,11 +47,22 @@ class Magnet(Device):
         return self.get('CURRENT_MONITOR')
 
 magnets = []
+
+# Add Horizontal Correctors
 for num in range(1, 25):
-    magnets.append(Magnet('H', num))
+    prefix = 'PS-OCH-B-2-{0}'.format(num)
+    label = 'OCH-B-2-{0}'.format(num)
+    magnets.append(Magnet(prefix, label, min_sp=-4., max_sp=4.))
+
+# Add Vertical Correctors
 for num in range(1, 12):
-    s = num if num != 9 else '09' # OCV-B-2-09 deviates from naming convention
-    magnets.append(Magnet('V', s))
+    prefix = 'PS-OCV-B-2-{0}'.format(num if num != 9 else '09')
+    label = 'OCV-B-2-{0}'.format(num)
+    magnets.append(Magnet(prefix, label, min_sp=-4., max_sp=4.))
+
+for magnet in magnets:
+    magnet.add_callback('CURRENT_SP', callback)
+    magnet.add_callback('CURRENT_MONITOR', callback)
 
 @app.route('/')
 def index():
