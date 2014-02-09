@@ -8,7 +8,7 @@ from epics import PV
 from epics.ca import CASeverityException
 import json
 import re
-from time import sleep
+import time
 from threading import Thread
 from datetime import datetime
 
@@ -40,6 +40,9 @@ class Magnet(object):
     STATUS_GOING_TO_MIN = 'Going to min'
     STATUS_GOING_TO_MAX = 'Going to max'
     STATUS_GOING_TO_INIT = 'Going to init'
+    STATUS_PAUSING = 'Pausing'
+
+    TIMEOUT = 60
 
     def __init__(self, prefix, name, min_sp=None, max_sp=None, **kws):
         super(Magnet, self).__init__()
@@ -51,7 +54,7 @@ class Magnet(object):
         self._cycle_status = self.STATUS_READY
         self.min_sp = min_sp
         self.max_sp = max_sp
-        self.tolerance = 0.1
+        self.tolerance = 0.05
         self.cycling = False
         self.cycle_iterations = 3
         self.cycle_pause_time = 3.
@@ -95,19 +98,21 @@ class Magnet(object):
 
     def go_to_setpoint(self, value):
         self.setpoint = value
-        count = 0
-        while abs(self.readback - self.setpoint) > self.tolerance:
-            if count > 10:
+        start_time = time.time()
+        while abs(self.readback - value) > self.tolerance:
+            if time.time() - start_time > self.TIMEOUT:
                 raise SetpointTimeoutException()
-            sleep(1.)
-            count += 1
-        return ok
+            time.sleep(1.)
 
     def cycle_iteration(self):
         self.cycle_status = self.STATUS_GOING_TO_MIN
         self.go_to_setpoint(self.min_sp)
+        self.cycle_status = self.STATUS_PAUSING
+        time.sleep(self.cycle_pause_time)
         self.cycle_status = self.STATUS_GOING_TO_MAX
         self.go_to_setpoint(self.max_sp)
+        self.cycle_status = self.STATUS_PAUSING
+        time.sleep(self.cycle_pause_time)
 
     def cycle(self):
         if self.cycling:
