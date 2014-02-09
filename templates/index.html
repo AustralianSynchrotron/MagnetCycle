@@ -45,6 +45,7 @@
         ko.applyBindings(viewModel);
         document.getElementById('cycle-button').onclick = function() {
           postDataAsJSON('{{ url_for("cycle") }}', viewModel.magnetsToCycle());
+          viewModel.magnetsToCycle([]);
         }
         document.getElementById('select-all-button').onclick = function() {
           viewModel.magnetsToCycle([{% for mag in magnets %}'{{mag.tag}}',{% endfor %}]);
