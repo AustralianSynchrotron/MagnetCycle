@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding-top: 50px;
   font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -14,7 +14,7 @@ body {
 }
 
 .tables-container {
-  width: 1320px;
+  width: 1380px;
   margin: 0 auto;
 }
 
@@ -32,11 +32,11 @@ col.name {
 }
 
 col.value {
-  width: 15%;
+  width: 16%;
 }
 
 col.status {
-  width: 37%;
+  width: 36%;
 }
 
 col.cycle {

@@ -19,8 +19,7 @@ app.jinja_env.lstrip_blocks = True
 sockets = Sockets(app)
 ws_conns = []
 
-
-def callback(pvname, value, **kws):
+def send_magnet_change(pvname, value, **kws):
     message = json.dumps({'pvname': pvname, 'value': value})
     for ws in ws_conns:
         try:
@@ -31,15 +30,14 @@ def callback(pvname, value, **kws):
 class SetpointTimeoutException(IOError):
     '''The magnet failed to reach the requested setpoint.'''
 
-
 class Magnet(object):
 
-    STATUS_READY = 'Ready'
+    STATUS_CYCLE_REQUIRED = 'Required'
     STATUS_TIMEOUT = 'Failed: Timeout'
     STATUS_CA_ERROR = 'Failed: Channel Access'
-    STATUS_GOING_TO_MIN = 'Going to min'
-    STATUS_GOING_TO_MAX = 'Going to max'
-    STATUS_GOING_TO_INIT = 'Going to init'
+    STATUS_GOING_TO_MIN = 'Going to Min'
+    STATUS_GOING_TO_MAX = 'Going to Max'
+    STATUS_GOING_TO_INIT = 'Going to Init'
     STATUS_PAUSING = 'Pausing'
 
     TIMEOUT = 60
@@ -51,7 +49,7 @@ class Magnet(object):
         self.name = name
         self.prefix = prefix
         self.tag = re.sub('[:-]', '_', prefix)
-        self._cycle_status = self.STATUS_READY
+        self._cycle_status = self.STATUS_CYCLE_REQUIRED
         self.min_sp = min_sp
         self.max_sp = max_sp
         self.tolerance = 0.05
@@ -59,6 +57,11 @@ class Magnet(object):
         self.cycle_iterations = 3
         self.cycle_pause_time = 3.
         self.cycle_status_callbacks = []
+        self.setpoint_pv.add_callback(self.setpoint_changed)
+
+    def setpoint_changed(self, **kws):
+        if not self.cycling:
+            self.cycle_status = self.STATUS_CYCLE_REQUIRED
 
     def add_callback(self, attr, callback, **kws):
         if attr == 'cycle_status':
@@ -69,7 +72,6 @@ class Magnet(object):
             self.readback_pv.add_callback(callback, **kws)
         else:
             raise KeyError('Unknown attribute.')
-
 
     @property
     def setpoint(self):
@@ -150,20 +152,24 @@ magnets = []
 for num in range(1, 25):
     prefix = 'PS-OCH-B-2-{0}'.format(num)
     name = 'OCH-B-2-{0}'.format(num)
-    magnets.append(Magnet(prefix, name, min_sp=-4., max_sp=4.))
+    magnet = Magnet(prefix, name, min_sp=-4., max_sp=4.)
+    magnet.ramped = num in [6, 18, 22]
+    magnets.append(magnet)
 
 # Add Vertical Correctors
 for num in range(1, 12):
     prefix = 'PS-OCV-B-2-{0}'.format(num if num != 9 else '09')
     name = 'OCV-B-2-{0}'.format(num)
-    magnets.append(Magnet(prefix, name, min_sp=-4., max_sp=4.))
+    magnet = Magnet(prefix, name, min_sp=-4., max_sp=4.)
+    magnet.ramped = num in [1, 2, 5, 10]
+    magnets.append(magnet)
 
 tag_to_magnet = {}
 for magnet in magnets:
     tag_to_magnet[magnet.tag] = magnet
-    magnet.add_callback('setpoint', callback)
-    magnet.add_callback('readback', callback)
-    magnet.add_callback('cycle_status', callback)
+    magnet.add_callback('setpoint', send_magnet_change)
+    magnet.add_callback('readback', send_magnet_change)
+    magnet.add_callback('cycle_status', send_magnet_change)
 
 @app.route('/')
 def index():
@@ -183,7 +189,7 @@ def cycle():
 @app.route('/reset', methods=['POST'])
 def reset():
     for magnet in magnets:
-        magnet.cycle_status = Magnet.STATUS_READY
+        magnet.cycle_status = Magnet.STATUS_CYCLE_REQUIRED
     return 'OK'
 
 @sockets.route('/socket')

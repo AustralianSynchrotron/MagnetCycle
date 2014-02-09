@@ -82,7 +82,7 @@
           <tbody>
             {% for mag in mags %}
               <tr>
-                <td>{{mag.name}}</td>
+                <td>{{mag.name}}{% if mag.ramped %}*{% endif %}</td>
                 <td class='numeric' data-bind='text: {{mag.tag}}_CURRENT_SP'></td>
                 <td class='numeric' data-bind='text: {{mag.tag}}_CURRENT_MONITOR'></td>
                 <td data-bind='text: {{mag.tag}}_CYCLE_STATUS'></td>
