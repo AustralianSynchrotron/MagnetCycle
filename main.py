@@ -137,6 +137,8 @@ class Magnet(object):
         else:
             self.cycle_status = u'✓ {0:%H:%M %d/%m}'.format(datetime.now())
 
+        self.cycling = False
+
 magnets = []
 
 # Add Horizontal Correctors
@@ -171,6 +173,12 @@ def cycle():
         flask.abort(400)
     for magnet in magnets_to_cycle:
         gevent.spawn(magnet.cycle)
+    return 'OK'
+
+@app.route('/reset', methods=['POST'])
+def reset():
+    for magnet in magnets:
+        magnet.cycle_status = Magnet.STATUS_READY
     return 'OK'
 
 @sockets.route('/socket')

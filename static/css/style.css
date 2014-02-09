@@ -51,7 +51,12 @@ th.numeric, td.numeric {
   text-align: right;
 }
 
-button {
-  font-size: 18px;
+.small-button {
+  font-size: 16px;
+  margin: 6px;
+}
+
+.big-button {
+  font-size: 24px;
   margin: 12px;
 }

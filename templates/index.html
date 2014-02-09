@@ -34,13 +34,26 @@
         viewModel[property](data.value);
       }
 
+      function postDataAsJSON(url, data) {
+        var request = new XMLHttpRequest();
+        request.open('POST', url, true);
+        request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+        request.send(JSON.stringify(data));
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
         ko.applyBindings(viewModel);
         document.getElementById('cycle-button').onclick = function() {
-          var request = new XMLHttpRequest();
-          request.open('POST', '{{ url_for("cycle") }}', true);
-          request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-          request.send(JSON.stringify(viewModel.magnetsToCycle()));
+          postDataAsJSON('{{ url_for("cycle") }}', viewModel.magnetsToCycle());
+        }
+        document.getElementById('select-all-button').onclick = function() {
+          viewModel.magnetsToCycle([{% for mag in magnets %}'{{mag.tag}}',{% endfor %}]);
+        }
+        document.getElementById('deselect-all-button').onclick = function() {
+          viewModel.magnetsToCycle([]);
+        }
+        document.getElementById('reset-button').onclick = function() {
+          postDataAsJSON('{{ url_for("reset") }}');
         }
       });
     </script>
@@ -84,8 +97,13 @@
         {{ table(magnets[12:24]) }}
         {{ table(magnets[24:]) }}
       </div>
+      <div>
+        <button type='button' class='small-button' id='select-all-button'>Select All</button>
+        <button type='button' class='small-button' id='deselect-all-button'>Deselect All</button>
+        <button type='button' class='small-button' id='reset-button'>Reset Statuses</button>
+      </div>
 
-      <button type='button' id='cycle-button'>Cycle Selected Magnets</button>
+      <button type='button' class='big-button' id='cycle-button'>Cycle Selected Magnets</button>
     </div>
   </body>
 </html>
