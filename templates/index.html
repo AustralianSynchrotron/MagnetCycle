@@ -59,8 +59,8 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Setpoint</th>
-              <th>Readback</th>
+              <th class='numeric'>Setpoint</th>
+              <th class='numeric'>Readback</th>
               <th>Status</th>
               <th>Cycle</th>
             </tr>
@@ -69,8 +69,8 @@
             {% for mag in mags %}
               <tr>
                 <td>{{mag.name}}</td>
-                <td data-bind='text: {{mag.tag}}_CURRENT_SP'></td>
-                <td data-bind='text: {{mag.tag}}_CURRENT_MONITOR'></td>
+                <td class='numeric' data-bind='text: {{mag.tag}}_CURRENT_SP'></td>
+                <td class='numeric' data-bind='text: {{mag.tag}}_CURRENT_MONITOR'></td>
                 <td data-bind='text: {{mag.tag}}_CYCLE_STATUS'></td>
                 <td><input type='checkbox' value='{{mag.tag}}' data-bind='checked: magnetsToCycle'/></td>
               </tr>

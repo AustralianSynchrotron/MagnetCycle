@@ -1,6 +1,6 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 .clearfix:after {
@@ -14,33 +14,41 @@ body {
 }
 
 .tables-container {
-  width: 1300px;
+  width: 1320px;
   margin: 0 auto;
 }
 
 table {
-  padding: 10px;
+  padding: 8px;
   width: 33%;
   float: left;
+}
+
+table:first-child, table:nth-child(2) {
+  border-right: solid 1px;
 }
 
 col.name {
 }
 
 col.value {
-  width: 19%;
+  width: 15%;
 }
 
 col.status {
-  width: 25%;
+  width: 37%;
 }
 
 col.cycle {
-  width: 10%;
+  width: 6%;
 }
 
 th, td {
   text-align: center;
+}
+
+th.numeric, td.numeric {
+  text-align: right;
 }
 
 button {

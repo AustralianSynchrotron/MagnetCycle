@@ -3,9 +3,14 @@
 import flask
 from flask_sockets import Sockets
 from geventwebsocket.exceptions import WebSocketError
-from epics import Device
+import gevent
+from epics import PV
+from epics.ca import CASeverityException
 import json
 import re
+from time import sleep
+from threading import Thread
+from datetime import datetime
 
 app = flask.Flask(__name__)
 app.debug = True
@@ -13,6 +18,7 @@ app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 sockets = Sockets(app)
 ws_conns = []
+
 
 def callback(pvname, value, **kws):
     message = json.dumps({'pvname': pvname, 'value': value})
@@ -22,31 +28,114 @@ def callback(pvname, value, **kws):
         except WebSocketError:
             pass
 
-class Magnet(Device):
+class SetpointTimeoutException(IOError):
+    '''The magnet failed to reach the requested setpoint.'''
 
-    attrs = ('CURRENT_SP', 'CURRENT_MONITOR')
+
+class Magnet(object):
 
     STATUS_READY = 'Ready'
+    STATUS_TIMEOUT = 'Failed: Timeout'
+    STATUS_CA_ERROR = 'Failed: Channel Access'
     STATUS_GOING_TO_MIN = 'Going to min'
     STATUS_GOING_TO_MAX = 'Going to max'
+    STATUS_GOING_TO_INIT = 'Going to init'
 
     def __init__(self, prefix, name, min_sp=None, max_sp=None, **kws):
+        super(Magnet, self).__init__()
+        self.setpoint_pv = PV(prefix + ':CURRENT_SP')
+        self.readback_pv = PV(prefix + ':CURRENT_MONITOR')
         self.name = name
+        self.prefix = prefix
         self.tag = re.sub('[:-]', '_', prefix)
-        self.cycle_status = self.STATUS_READY
+        self._cycle_status = self.STATUS_READY
         self.min_sp = min_sp
         self.max_sp = max_sp
+        self.tolerance = 0.1
+        self.cycling = False
         self.cycle_iterations = 3
         self.cycle_pause_time = 3.
-        super(Magnet, self).__init__(prefix=prefix, delim=':', attrs=self.attrs, **kws)
+        self.cycle_status_callbacks = []
+
+    def add_callback(self, attr, callback, **kws):
+        if attr == 'cycle_status':
+            self.cycle_status_callbacks.append(callback)
+        elif attr == 'setpoint':
+            self.setpoint_pv.add_callback(callback, **kws)
+        elif attr == 'readback':
+            self.readback_pv.add_callback(callback, **kws)
+        else:
+            raise KeyError('Unknown attribute.')
+
 
     @property
     def setpoint(self):
-        return self.get('CURRENT_SP')
+        return self.setpoint_pv.get()
+
+    @setpoint.setter
+    def setpoint(self, value):
+        self.setpoint_pv.put(value)
 
     @property
     def readback(self):
-        return self.get('CURRENT_MONITOR')
+        return self.readback_pv.get()
+
+    @property
+    def cycle_status(self):
+        return self._cycle_status
+
+    @cycle_status.setter
+    def cycle_status(self, value):
+        changed = self._cycle_status != value
+        self._cycle_status = value
+        if changed and self.cycle_status_callbacks:
+            kws = {'pvname': self.prefix + ':CYCLE_STATUS', 'value': value}
+            for cb in self.cycle_status_callbacks:
+                Thread(target=cb, kwargs=kws).start()
+
+    def go_to_setpoint(self, value):
+        self.setpoint = value
+        count = 0
+        while abs(self.readback - self.setpoint) > self.tolerance:
+            if count > 10:
+                raise SetpointTimeoutException()
+            sleep(1.)
+            count += 1
+        return ok
+
+    def cycle_iteration(self):
+        self.cycle_status = self.STATUS_GOING_TO_MIN
+        self.go_to_setpoint(self.min_sp)
+        self.cycle_status = self.STATUS_GOING_TO_MAX
+        self.go_to_setpoint(self.max_sp)
+
+    def cycle(self):
+        if self.cycling:
+            return
+        self.cycling = True
+
+        init_sp = self.setpoint
+        err = None
+        for i in range(self.cycle_iterations):
+            try:
+                self.cycle_iteration()
+            except SetpointTimeoutException:
+                err = self.STATUS_TIMEOUT
+                break
+            except CASeverityException:
+                err = self.STATUS_CA_ERROR
+                break
+        self.cycle_status = self.STATUS_GOING_TO_INIT
+        try:
+            self.go_to_setpoint(init_sp)
+        except SetpointTimeoutException:
+            err = self.STATUS_TIMEOUT
+        except CASeverityException:
+            err = self.STATUS_CA_ERROR
+        if err:
+            self.cycle_status = err
+        else:
+            self.cycle_status = u'✓ {0:%H:%M %d/%m}'.format(datetime.now())
 
 magnets = []
 
@@ -64,9 +153,10 @@ for num in range(1, 12):
 
 tag_to_magnet = {}
 for magnet in magnets:
-    magnet.add_callback('CURRENT_SP', callback)
-    magnet.add_callback('CURRENT_MONITOR', callback)
     tag_to_magnet[magnet.tag] = magnet
+    magnet.add_callback('setpoint', callback)
+    magnet.add_callback('readback', callback)
+    magnet.add_callback('cycle_status', callback)
 
 @app.route('/')
 def index():
@@ -79,7 +169,8 @@ def cycle():
         magnets_to_cycle = [tag_to_magnet[tag] for tag in tags]
     except TypeError, KeyError:
         flask.abort(400)
-    # TODO: Cycle magnets
+    for magnet in magnets_to_cycle:
+        gevent.spawn(magnet.cycle)
     return 'OK'
 
 @sockets.route('/socket')
